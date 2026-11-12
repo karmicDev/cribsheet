@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cribsheet_mcp/cribsheet_mcp.dart';
 
 Future<void> main() async {
   stderr.writeln('cribsheet_mcp: started');
@@ -9,7 +10,14 @@ Future<void> main() async {
   .transform(const LineSplitter());
 
   await for (final line in lines) {
-    stderr.writeln('received: $line');
+    var decoded = jsonDecode(line);
+    if (decoded is Map<String, dynamic>) {
+      var response = handle(decoded);
+      if (response != null) {
+        stdout.writeln(jsonEncode(response));
+      }
+    }
+
   }
 
   stderr.writeln('cribsheet_mcp: stdin_closed exiting');
